@@ -1,0 +1,19 @@
+.form-inline .form-control {
+    min-width: 50vw;
+}
+.done {
+    opacity: .2;
+    text-decoration: line-through;
+}
+
+.done .buttons {
+    text-decoration: none !important;
+}
+
+.card {
+    margin: 30px auto !important;
+}
+
+.card-footer {
+    margin-top: 30px;
+}
