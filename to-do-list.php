@@ -36,7 +36,7 @@ function activate_to_do_list() {
 		PRIMARY KEY  ( id )
 	) $charset_collate;";
 
-	if ($wpdb->get_var( "SHOW TABLES LIKE '$table_name'") != $table_name ) {
+	if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		dbDelta( $sql );
 	}
@@ -77,10 +77,10 @@ function admin_page_content() {
       </thead>
       <tbody>
       <?php
-        $results = $wpdb->get_results("SELECT * FROM $table_name");
-        foreach ($results as $result) {
+        $results = $wpdb->get_results( "SELECT * FROM $table_name" );
+        foreach ( $results as $result ) {
           echo "
-            <tr class='" .(($result->done) ? 'done' : 'undone')."'>
+            <tr class='" . ( ( $result->done ) ? 'done' : 'undone' ) . "'>
               <td width='5%'>$result->id</td>
               <td width='20%'>$result->created</td>
               <td width='50%'>$result->task</td>
@@ -115,16 +115,16 @@ function admin_page_content() {
       ?>
       </tbody>
       <?php
-
   //Add task
-  if (isset($_POST['save'])) {
-    if (empty($_POST['task'])) {
-      echo "<script>alert(You must fill the task);</script>";
+  if  (isset( $_POST['save'] ) ) {
+    if ( empty( $_POST['task'] ) ) {
+      echo "<script>alert( You must fill the task );</script>";
     }
     else {
       $created = current_time( 'mysql' );
-      $task = $_POST['task']; $wpdb->insert(
-      $table_name,
+      $task = $_POST['task']; 
+      $wpdb->insert(
+        $table_name,
         array(
           'created' => $created,
           'task' => $task,
@@ -136,18 +136,18 @@ function admin_page_content() {
   }
 
 	// Mark as read
-	if (isset($_GET['toggle'])) {
+	if ( isset( $_GET['toggle'] ) ) {
 		$id = $_GET['toggle'];
 		$done = $_GET['done'];
-    $wpdb->query("UPDATE $table_name SET `done` = IF(`done`= 0, 1, 0) WHERE id='$id'");
+    $wpdb->query( "UPDATE $table_name SET `done` = IF( `done`= 0, 1, 0 ) WHERE id='$id'" );
     echo "<script>location.replace('admin.php?page=to-do-list%2Fto-do-list.php');</script>";
   }
 
   // Edit task
-	if (isset($_GET['edit'])) {
+	if ( isset( $_GET['edit'] ) ) {
     $id = $_GET['edit'];
-    $results = $wpdb->get_results("SELECT * FROM $table_name WHERE id='$id'");
-    foreach ($results as $result) {
+    $results = $wpdb->get_results( "SELECT * FROM $table_name WHERE id='$id'" );
+    foreach ( $results as $result ) {
       $task = $result->task;
       $done = $result->done;
 	  }
@@ -172,7 +172,7 @@ function admin_page_content() {
   }
 
   // Update task
-  if (isset($_POST['update'])) {
+  if ( isset( $_POST['update'] ) ) {
     $id = $_POST['id'];
     $task = $_POST['task'];
     $wpdb->update(
@@ -184,11 +184,11 @@ function admin_page_content() {
           'id'=>$id
       )
     );
-	  echo "<script>location.replace('admin.php?page=to-do-list%2Fto-do-list.php');</script>";
+	  echo "<script>location.replace( 'admin.php?page=to-do-list%2Fto-do-list.php' );</script>";
   }
 
   // Delete task
-  if (isset($_GET['delete'])) {
+  if ( isset( $_GET['delete'] ) ) {
     $id = $_GET['delete'];
     $wpdb->delete(
       $table_name,
@@ -196,14 +196,16 @@ function admin_page_content() {
         'id' => $id
       )
     );
-    echo "<script>location.replace('admin.php?page=to-do-list%2Fto-do-list.php');</script>";
+    echo "<script>location.replace( 'admin.php?page=to-do-list%2Fto-do-list.php' );</script>";
   }
-	
-  // CSS
-	wp_enqueue_style('bootstrap', '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css');
-	wp_enqueue_style( 'custom-styles', plugin_dir_url( __FILE__ ) . 'admin/css/styles.css' );
+  
+  // CSS & JS
+  function custom_scripts() {
+    wp_enqueue_style( 'bootstrap', '//stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css' );
+    wp_enqueue_style( 'custom-styles', plugin_dir_url( __FILE__ ) . 'admin/css/styles.css' );
+    wp_enqueue_script( 'bootstrap-jQuery', '//code.jquery.com/jquery-3.4.1.slim.min.js' );
+    wp_enqueue_script( 'bootstrap-bundle', 'https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js' );
+  }
 
-	// JS
-  wp_enqueue_script('bootstrap-jQuery', '//code.jquery.com/jquery-3.4.1.slim.min.js');
-  wp_enqueue_script('bootstrap-bundle', 'https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js');
+  add_action('admin_print_styles', 'custom_scripts');
 }
